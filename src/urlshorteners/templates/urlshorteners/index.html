@@ -31,10 +31,10 @@
           <td>{{ url.link }}</td>
           <td>
             <a
-              href="{% url 'urlshorteners:go_to' url.uuid %}"
+              href="{% url 'urlshorteners:go' url.uuid %}"
               target="_blank"
               rel="noopener noreferrer"
-              >{% url 'urlshorteners:go_to' url.uuid %}</a
+              >{% url 'urlshorteners:go' url.uuid %}</a
             >
           </td>
         </tr>
@@ -94,23 +94,24 @@
         e.preventDefault();
 
         link = $("textarea[name='link']").val();
+        if (link === "") {
+          return alert("Your link is empty");
+        }
 
-        if (link !== "") {
-          $.ajax({
-            type: "POST",
-            url: "/urlshorteners/create/",
-            data: {
-              link,
-              csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
-            },
-            success: function (uid) {
-              alert(`Save successfully:
+        $.ajax({
+          type: "POST",
+          url: "/urlshorteners/new/",
+          data: {
+            link,
+            csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+          },
+          success: function (uid) {
+            alert(`Save successfully:
               - ${location.origin}${location.pathname}${uid}
               - ${location.href}${uid}`);
-              location.reload();
-            },
-          });
-        }
+            location.reload();
+          },
+        });
       });
     });
   });

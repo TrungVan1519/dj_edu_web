@@ -6,13 +6,13 @@ from . import models
 import uuid
 
 
-def get_all(request):
-    return render(request, 'urlshorteners/get_all.html',  {
+def index(request):
+    return render(request, 'urlshorteners/index.html',  {
         'urls': models.Url.objects.all().order_by('id').reverse(),
     })
 
 
-def create(request):
+def new(request):
     if request.method == 'POST':
         link = request.POST.get('link')
         uid = str(uuid.uuid4())[:5]
@@ -23,6 +23,6 @@ def create(request):
         return HttpResponse(uid)
 
 
-def go_to(request, uid):
+def go(request, uid):
     url = models.Url.objects.get(uuid=uid)
     return redirect(url.link)

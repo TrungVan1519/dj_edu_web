@@ -2,10 +2,11 @@ from django.urls import path
 
 from . import views
 
-app_name = 'urlshorteners'
+app_name = 'notebooks'
 
 urlpatterns = [
     path('new/', views.new, name='new'),
-    path('<str:uid>/', views.go, name='go'),
+    path('<int:id>/update/', views.update, name='update'),
+    path('<int:id>/delete/', views.delete, name='delete'),
     path('', views.index, name='index'),
 ]
