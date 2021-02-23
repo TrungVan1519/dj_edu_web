@@ -8,7 +8,7 @@ import uuid
 
 def get_all(request):
     return render(request, 'urlshorteners/get_all.html',  {
-        'urls': models.Url.objects.all(),
+        'urls': models.Url.objects.all().order_by('id').reverse(),
     })
 
 

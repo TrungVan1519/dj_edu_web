@@ -93,18 +93,20 @@
       $("#btn-ok").click(function (e) {
         e.preventDefault();
 
+        link = $("textarea[name='link']").val();
+
         if (link !== "") {
           $.ajax({
             type: "POST",
             url: "/urlshorteners/create/",
             data: {
-              link: $("textarea[name='link']").val(),
-              csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+              link,
+              csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
             },
             success: function (uid) {
               alert(`Save successfully:
-              ${location.origin}/${location.pathname}/${uid}
-              ${location.href}/${uid}`);
+              - ${location.origin}${location.pathname}${uid}
+              - ${location.href}${uid}`);
               location.reload();
             },
           });
