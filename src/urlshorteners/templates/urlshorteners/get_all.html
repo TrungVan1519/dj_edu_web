@@ -1,0 +1,116 @@
+{% extends 'layouts/base.html' %} 
+
+{% block content %}
+<div class="container">
+  <!-- Button trigger modal -->
+  <button
+    type="button"
+    class="btn btn-outline-success"
+    data-toggle="modal"
+    data-target="#modal-shorten-link"
+  >
+    Shorten Link
+  </button>
+  <!-- Button trigger modal -->
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover mt-3">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">UUID</th>
+          <th scope="col">Link</th>
+          <th scope="col">Shorten Link</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for url in urls %}
+        <tr>
+          <th scope="row">{{ url.id }}</th>
+          <td>{{ url.uuid }}</td>
+          <td>{{ url.link }}</td>
+          <td>
+            <a
+              href="{% url 'urlshorteners:go_to' url.uuid %}"
+              target="_blank"
+              rel="noopener noreferrer"
+              >{% url 'urlshorteners:go_to' url.uuid %}</a
+            >
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="modal-shorten-link"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="modal-shorten-linkLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modal-shorten-linkLabel">
+          Enter your link:
+        </h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          {% csrf_token %}
+          <div class="form-group">
+            <textarea class="form-control" name="link"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary" id="btn-ok">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal -->
+
+<script>
+  window.addEventListener("DOMContentLoaded", (event) => {
+    $("#modal-shorten-link").on("show.bs.modal", function (event) {
+      $("#btn-ok").click(function (e) {
+        e.preventDefault();
+
+        if (link !== "") {
+          $.ajax({
+            type: "POST",
+            url: "/urlshorteners/create/",
+            data: {
+              link: $("textarea[name='link']").val(),
+              csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+            },
+            success: function (uid) {
+              alert(`Save successfully:
+              ${location.origin}/${location.pathname}/${uid}
+              ${location.href}/${uid}`);
+              location.reload();
+            },
+          });
+        }
+      });
+    });
+  });
+</script>
+{% endblock content %}
