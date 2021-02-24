@@ -1,14 +1,14 @@
 {% extends 'layouts/base.html' %} 
 
 {% block content %}
-<div class="container">
+<div class="container-fluid">
   <!-- Button trigger modal -->
   <button
     id="btn-add-note"
     type="button"
     class="btn btn-outline-success"
     data-toggle="modal"
-    data-target="#model-notebook"
+    data-target="#modal-notebook"
   >
     Add note
   </button>
@@ -34,17 +34,19 @@
               class="btn btn-outline-warning btn-update-note"
               data-note-id="{{ note.id }}"
               data-toggle="modal"
-              data-target="#model-notebook"
+              data-target="#modal-notebook"
             >
               Update
             </button>
           </td>
           <td class="text-center">
-            <a
-              href="{% url 'notebooks:delete' note.id %}"
-              class="btn btn-outline-danger"
-              >Delete</a
+            <button
+              type="button"
+              class="btn btn-outline-danger btn-delete-note"
+              data-note-id="{{ note.id }}"
             >
+              Delete
+            </button>
           </td>
         </tr>
         {% endfor %}
@@ -56,16 +58,16 @@
 <!-- Modal -->
 <div
   class="modal fade"
-  id="model-notebook"
+  id="modal-notebook"
   tabindex="-1"
   role="dialog"
-  aria-labelledby="model-notebookLabel"
+  aria-labelledby="modal-notebookLabel"
   aria-hidden="true"
 >
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="model-notebookLabel">Enter your note:</h5>
+        <h5 class="modal-title" id="modal-notebookLabel">Enter your note:</h5>
         <button
           type="button"
           class="close"
@@ -110,7 +112,9 @@
       $("input[name='note-id']").val(noteId);
     });
 
-    $("#model-notebook").on("show.bs.modal", function (event) {
+    $("#modal-notebook").on("show.bs.modal", function (event) {
+      $("textarea[name='content']").val("");
+
       $("#btn-ok").click(function (e) {
         e.preventDefault();
 
@@ -135,6 +139,21 @@
             location.reload();
           },
         });
+      });
+    });
+
+    $(".btn-delete-note").click(function (e) {
+      e.preventDefault();
+
+      const noteId = $(this).data("note-id");
+      $.ajax({
+        type: "GET",
+        url: `/notebooks/${noteId}/delete/`,
+        data: {},
+        success: function (response) {
+          alert(response);
+          location.reload();
+        },
       });
     });
   });

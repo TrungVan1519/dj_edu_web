@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from . import models
+from .models import Url
 
 
 class UrlAdmin(admin.ModelAdmin):
@@ -8,4 +8,4 @@ class UrlAdmin(admin.ModelAdmin):
     empty_value_display = '-None-'
 
 
-admin.site.register(models.Url, UrlAdmin)
+admin.site.register(Url, UrlAdmin)

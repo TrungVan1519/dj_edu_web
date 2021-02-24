@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from . import models
+from .models import Note
 
 
 class NoteAdmin(admin.ModelAdmin):
@@ -8,4 +8,4 @@ class NoteAdmin(admin.ModelAdmin):
     empty_value_display = '-None-'
 
 
-admin.site.register(models.Note, NoteAdmin)
+admin.site.register(Note, NoteAdmin)

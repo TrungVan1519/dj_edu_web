@@ -1,7 +1,7 @@
 {% extends 'layouts/base.html' %} 
 
 {% block content %}
-<div class="container">
+<div class="container-fluid">
   <!-- Button trigger modal -->
   <button
     type="button"
@@ -21,6 +21,7 @@
           <th scope="col">UUID</th>
           <th scope="col">Link</th>
           <th scope="col">Shorten Link</th>
+          <th scope="col"></th>
         </tr>
       </thead>
       <tbody>
@@ -36,6 +37,15 @@
               rel="noopener noreferrer"
               >{% url 'urlshorteners:go' url.uuid %}</a
             >
+          </td>
+          <td>
+            <button
+              type="button"
+              class="btn btn-danger btn-delete-shorten-link"
+              data-url-id="{{ url.id }}"
+            >
+              Delete
+            </button>
           </td>
         </tr>
         {% endfor %}
@@ -53,7 +63,7 @@
   aria-labelledby="modal-shorten-linkLabel"
   aria-hidden="true"
 >
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="modal-shorten-linkLabel">
@@ -90,12 +100,14 @@
 <script>
   window.addEventListener("DOMContentLoaded", (event) => {
     $("#modal-shorten-link").on("show.bs.modal", function (event) {
+      $("textarea[name='link']").val("");
+
       $("#btn-ok").click(function (e) {
         e.preventDefault();
 
         link = $("textarea[name='link']").val();
         if (link === "") {
-          return alert("Your link is empty");
+          return alert("Your link is empty. Please try again.");
         }
 
         $.ajax({
@@ -112,6 +124,21 @@
             location.reload();
           },
         });
+      });
+    });
+
+    $(".btn-delete-shorten-link").click(function (e) {
+      e.preventDefault();
+
+      const urlId = $(this).data("url-id");
+      $.ajax({
+        type: "GET",
+        url: `/urlshorteners/${urlId}/delete/`,
+        data: {},
+        success: function (response) {
+          alert(response);
+          location.reload();
+        },
       });
     });
   });

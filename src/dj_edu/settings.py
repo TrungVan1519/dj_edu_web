@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # own apps
+    'dictionaries',
     'notebooks',
     'others',
     'urlshorteners',

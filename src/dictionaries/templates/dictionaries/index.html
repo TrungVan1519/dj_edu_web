@@ -1,0 +1,211 @@
+{% extends 'layouts/base.html' %} 
+
+{% block content %}
+<div class="container-fluid">
+  <!-- Button trigger modal -->
+  <button
+    type="button"
+    class="btn btn-outline-success"
+    data-toggle="modal"
+    data-target="#modal-dictionary"
+  >
+    Search for meaning
+  </button>
+  <!-- Button trigger modal -->
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover mt-3">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Keyword</th>
+          <th scope="col">Meaning</th>
+          <th scope="col">Synonym</th>
+          <th scope="col">Antonym</th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for word in words %}
+        <tr>
+          <th scope="row">{{ word.id }}</th>
+          <td>{{ word.keyword }}</td>
+          <td>{{ word.meaning }}</td>
+          <td>{{ word.synonym }}</td>
+          <td>{{ word.antonym }}</td>
+          <td class="text-center">
+            <button
+              type="button"
+              class="btn btn-outline-danger btn-delete-word"
+              data-word-id="{{ word.id }}"
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="modal-dictionary"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="modal-dictionaryLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modal-dictionaryLabel">
+          Enter your keyword:
+        </h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="keyword">Keyword</label>
+            <input
+              class="form-control"
+              type="text"
+              name="keyword"
+              id="keyword"
+            />
+          </div>
+          <div class="form-group">
+            <label for="meaning">Meaning</label>
+            <textarea
+              class="form-control"
+              name="meaning"
+              id="meaning"
+              readonly="readonly"
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label for="synonym">Synonym</label>
+            <textarea
+              class="form-control"
+              name="synonym"
+              id="synonym"
+              readonly="readonly"
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label for="antonym">Antonym</label>
+            <textarea
+              class="form-control"
+              name="antonym"
+              id="antonym"
+              readonly="readonly"
+            ></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary" id="btn-save-word">
+          Save
+        </button>
+        <button type="button" class="btn btn-info" id="btn-search-word">
+          Search
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal -->
+
+<script>
+  window.addEventListener("DOMContentLoaded", (event) => {
+    $("#modal-dictionary").on("show.bs.modal", function (event) {
+      $("input[name='keyword']").val("");
+      $("textarea[name='meaning']").val("");
+      $("textarea[name='synonym']").val("");
+      $("textarea[name='antonym']").val("");
+
+      $("#btn-search-word").click(function (e) {
+        e.preventDefault();
+
+        $.ajax({
+          type: "POST",
+          url: "/dictionaries/search/",
+          data: {
+            keyword: $("input[name='keyword']").val().toLowerCase(),
+            csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+          },
+          success: function (json) {
+            if (!json.meaning) {
+              return alert(
+                `\'${json.keyword}\' is meaningless. Please try again.`
+              );
+            }
+
+            let meaning = "";
+            meaning += json.meaning.Noun
+              ? `- Noun: ${json.meaning.Noun}\n`
+              : "";
+            meaning += json.meaning.Verb ? `- Verb: ${json.meaning.Verb}` : "";
+            $("textarea[name='meaning']").val(meaning);
+
+            const synonym = json.synonym ? json.synonym : "";
+            $("textarea[name='synonym']").val(synonym);
+
+            const antonym = json.antonym ? json.antonym : "";
+            $("textarea[name='antonym']").val(antonym);
+          },
+        });
+      });
+
+      $("#btn-save-word").click(function (e) {
+        e.preventDefault();
+
+        $.ajax({
+          type: "POST",
+          url: "/dictionaries/new/",
+          data: {
+            keyword: $("input[name='keyword']").val().toLowerCase(),
+            meaning: $("textarea[name='meaning']").val(),
+            synonym: $("textarea[name='synonym']").val(),
+            antonym: $("textarea[name='antonym']").val(),
+            csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+          },
+          success: function (response) {
+            alert(response);
+            location.reload();
+          },
+        });
+      });
+    });
+
+    $(".btn-delete-word").click(function (e) {
+      e.preventDefault();
+
+      const wordId = $(this).data("word-id");
+      $.ajax({
+        type: "GET",
+        url: `/dictionaries/${wordId}/delete/`,
+        data: {},
+        success: function (response) {
+          alert(response);
+          location.reload();
+        },
+      });
+    });
+  });
+</script>
+{% endblock content %}
