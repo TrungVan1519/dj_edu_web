@@ -22,15 +22,35 @@
         >
           Admin
         </a>
-        <a class="nav-item nav-link" href="{% url 'dictionaries:index' %}">
-          Dictionaries
-        </a>
-        <a class="nav-item nav-link" href="{% url 'notebooks:index' %}">
-          Notebooks
-        </a>
-        <a class="nav-item nav-link" href="{% url 'urlshorteners:index' %}">
-          Shorten URLs
-        </a>
+
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            id="navbarDropdown"
+            role="button"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >
+            Level 1
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="{% url 'dictionaries:index' %}">
+              Dictionaries
+            </a>
+            <div class="dropdown-divider"></div>
+
+            <a class="dropdown-item" href="{% url 'notebooks:index' %}">
+              Notebooks
+            </a>
+            <div class="dropdown-divider"></div>
+
+            <a class="dropdown-item" href="{% url 'urlshorteners:index' %}">
+              Shorten URLs
+            </a>
+          </div>
+        </li>
       </div>
     </div>
   </nav>
