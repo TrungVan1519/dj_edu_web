@@ -1,0 +1,27 @@
+{% extends 'layouts/base.html' %} 
+
+{% block content %}
+<div class="container-fluid">
+  <h1>Poll Questions</h1>
+
+  {% if questions %} 
+    {% for question in questions %}
+    <div class="card">
+      <div class="card-body">
+        <p class="lead">{{ question.question_text }}</p>
+        <a class="btn btn-success" href="{% url 'polls:vote' question.id %}"
+          >Vote now</a
+        >
+        <a class="btn btn-info" href="{% url 'polls:detail' question.id %}"
+          >Detail</a
+        >
+      </div>
+    </div>
+    {% endfor %} 
+  
+  {% else %}
+  <p>No poll avavilable</p>
+  
+  {% endif %}
+</div>
+{% endblock content %}

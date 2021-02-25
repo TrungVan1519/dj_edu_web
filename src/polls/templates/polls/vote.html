@@ -1,0 +1,35 @@
+{% extends 'layouts/base.html' %} 
+
+{% block content %}
+<div class="container">
+  <a class="btn btn-secondary" href="{% url 'polls:index' %}">Back To Polls</a>
+  <h1 class="text-center">{{ question.question_text }}</h1>
+
+  {% if error_message %}
+  <p class="alert alert-danger">
+    <strong>{{ error_message }}</strong>
+  </p>
+  {% endif %}
+
+  <form action="{% url 'polls:vote' question.id %}" method="POST">
+    {% csrf_token %} 
+    
+    {% for choice in question.choice_set.all %}
+    <div class="form-check">
+      <input
+        type="radio"
+        name="choice"
+        class="form-check-input"
+        id="choice{{ forloop.counter }}"
+        value="{{ choice.id }}"
+      />
+      <label class="form-check-label" for="choice{{ forloop.counter }}"
+        >{{ choice.choice_text }}</label
+      >
+    </div>
+    {% endfor %}
+
+    <button type="submit" class="btn btn-primary">Vote</button>
+  </form>
+</div>
+{% endblock %}

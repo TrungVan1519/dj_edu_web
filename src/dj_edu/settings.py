@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'dictionaries',
     'notebooks',
     'others',
+    'polls',
     'urlshorteners',
 ]
 
